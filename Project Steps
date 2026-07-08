@@ -1,0 +1,194 @@
+Project Steps: HorseVision AI – Image Classification System
+
+Step 1: Data Collection
+
+First, images were collected to create the dataset.
+The images were divided into different categories (classes). For example:
+
+Class 1: Horse images
+Class 2: Other images
+
+The purpose of collecting different classes is to teach the AI model how to distinguish between them.
+
+
+Step 2: Training the Model Using Teachable Machine
+
+Google Teachable Machine was used to train the image classification model.
+
+The steps were:
+
+Open Google Teachable Machine.
+Select Image Project.
+Create classes for the images.
+Upload training images into each class.
+Start the training process.
+
+During training, the neural network learns the important features of each image, such as shapes, colors, and patterns.
+
+Step 3: Exporting the Trained Model
+
+After completing the training:
+
+Click Export Model.
+Choose TensorFlow/Keras model.
+Download the model files.
+
+The exported files include:
+
+keras_model.h5 → contains the trained neural network.
+labels.txt → contains the names of the classes.
+
+Step 4: Setting Up the Environment
+
+Google Colab was used as the programming environment.
+
+The required libraries were installed:
+
+TensorFlow
+Keras
+NumPy
+Pillow
+
+These libraries allow Python to load the model and process images.
+
+Step 1: Upload the Model Files
+
+After training the model in Teachable Machine, download:
+
+keras_model.h5
+labels.txt
+
+Upload them to Google Colab:
+from google.colab import files
+
+uploaded = files.upload()
+
+Step 2: Install Required Libraries
+
+Because the model was created using Teachable Machine, we use tf_keras:
+
+!pip install tf_keras
+
+After installation restart the runtime:
+
+Runtime → Restart session
+
+Step 3: Import Libraries
+import tf_keras as keras
+import numpy as np
+from PIL import Image
+Step 4: Load the Trained AI Model
+
+The file keras_model.h5 contains the trained neural network.
+
+model = keras.models.load_model(
+    "keras_model.h5",
+    compile=False
+)
+
+print("Model loaded successfully")
+
+Output:Model loaded successfully
+Step 5: Load Class Names
+
+The file labels.txt contains the names of the classes.
+
+with open("labels.txt") as f:
+    labels = [line.strip() for line in f]
+
+print(labels)
+
+Example output:
+
+['0 Horse', '1 Other'
+
+tep 6: Upload an Image for Testing
+
+Upload the image you want to classify:
+
+from google.colab import files
+
+uploaded = files.upload()
+
+Example:
+
+OSK.jpg
+
+Step 7: Prepare the Image
+
+The model expects an image size of 224×224 pixels.
+
+image = Image.open("OSK.jpg").convert("RGB")
+
+image = image.resize((224,224))
+
+image_array = np.asarray(image).astype(np.float32)
+
+# Normalize image values
+image_array = (image_array / 127.5) - 1
+
+# Add batch dimension
+image_array = np.expand_dims(image_array, axis=0)
+
+print(image_array.shape)
+Output:
+
+(1, 224, 224, 3)
+Step 8: Predict the Image Class
+
+The model analyzes the image:
+
+prediction = model.predict(image_array)
+
+print(prediction)
+
+Example output:
+
+[[9.999863e-01 1.369919e-05]]
+
+This means:
+
+Class 0 probability = 99.9986%
+Class 1 probability = 0.0013%
+Step 9: Get the Highest Probability Class
+class_index = np.argmax(prediction)
+
+result = labels[class_index]
+
+confidence = prediction[0][class_index]
+
+print("Prediction:", result)
+print("Confidence:", confidence)
+
+Output:Prediction: 0 Horse
+Confidence: 0.9999863
+Step 10: Convert Confidence to Percentage
+confidence_percentage = confidence * 100
+
+print(
+    "The image is:",
+    result,
+    "with confidence:",
+    round(confidence_percentage, 2),
+    "%"
+)
+Output:
+
+The image is: 0 Horse with confidence: 99.99 %
+
+Complete Workflow Summary:
+Collect Images
+        ↓
+Train Model in Teachable Machine
+        ↓
+Export Keras Model
+        ↓
+Upload keras_model.h5 and labels.txt
+        ↓
+Load Model using TensorFlow/Keras
+        ↓
+Process Input Image
+        ↓
+Run Prediction
+        ↓
+Display Class Name + Confidence
